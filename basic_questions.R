@@ -1,31 +1,21 @@
 #---------------------------------
 #    Basic Questions HW1
 #---------------------------------
+# Libraries loading 
+library(RODBC)
 
-# Loading datasets
-contacts <- read_delim("~/Documents/ECP/3A/Marketing Analytics/charity/contacts.txt", 
-                       +     "\t", escape_double = FALSE, col_names = FALSE, 
-                       +     trim_ws = TRUE)
-colnames(contacts) = c("Sq", "ContactId", "Prefix", "FirstName", "ZipCode", "Status")
-
-acts <- read_delim("~/Documents/ECP/3A/Marketing Analytics/charity/acts.txt", 
-                   +     "\t", escape_double = FALSE, col_names = FALSE, 
-                   +     col_types = cols(X3 = col_double(), X4 = col_date(format = "%Y-%m-%d")), 
-                   +     trim_ws = TRUE)
-colnames(acts) = c("Sq","ContactId","Amount", "ActDate", "ActType", "PaymentType", "MessageId")
-
-actions <- read_delim("~/Documents/ECP/3A/Marketing Analytics/charity/actions.txt", 
-                      +     "\t", escape_double = FALSE, col_names = FALSE, 
-                      +     col_types = cols(X4 = col_date(format = "%Y-%m-%d")), 
-                      +     trim_ws = TRUE)
-colnames(actions) = c("Sq", "ContactId", "MessageId", "ActionDate")
-
-#- Descriptive statistics
-summary(acts)
+# Link to MySQL server 
+db = odbcConnect("MySQL", uid="root") # change if needed with name of your ODBC DNS
 
 #-    How much money is collected every year?
 
-# Lets seperate the data in each year (2003-2013)
+query1 ="SELECT YEAR(ActDate) as Year, SUM(Amount) as Total_amount
+          FROM charity.acts
+          GROUP BY Year"
+
+data1 = sqlQuery(db,query1)
+
+# Lets separate the data in each year (2003-2013)
 acts2003 = acts[acts$ActDate >= as.Date("2003-01-01", "%Y-%m-%d") & acts$ActDate <= as.Date("2003-12-31", "%Y-%m-%d"), ]
 acts2004 = acts[acts$ActDate >= as.Date("2004-01-01", "%Y-%m-%d") & acts$ActDate <= as.Date("2004-12-31", "%Y-%m-%d"), ]
 acts2005 = acts[acts$ActDate >= as.Date("2005-01-01", "%Y-%m-%d") & acts$ActDate <= as.Date("2005-12-31", "%Y-%m-%d"), ]
