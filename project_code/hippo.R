@@ -14,14 +14,14 @@ query1 ="SELECT YEAR(ActDate) as Year, ActType, SUM(Amount) as Total_amount
           FROM charity.acts
           GROUP BY Year, ActType"
 
-data = sqlQuery(db,query1)
-head(data1)
+data1temp = sqlQuery(db,query1)
+head(data)
 
 # Complete years with zeros
 for (year in 2003:2005){
-    data = rbind(data, c(year, "PA", 0))
+    data1temp = rbind(data1temp, c(year, "PA", 0))
 }
-data1 = data[order(data1$Year),]
+data1 = data1temp[order(data1temp$Year),]
 data1$Total_amount = as.numeric(data1$Total_amount)
 
 # Plot the results
