@@ -196,6 +196,10 @@ gr5 = ggplot(data= data5, aes(x = Year, y = Count, colour = "DO"))+
     geom_line(data = data6,alpha = 0.7, size = 1, aes(colour = "PA", x= Year, y=Count))+
     geom_line(data = data6pred,alpha = 0.7,size= 0.7, colour = "#00BFC4",linetype = "dashed", aes(x= Year, y=Count))+
     scale_x_continuous(breaks = 2003:2013)+
+    geom_point()+
+    geom_point(data=data5pred)+
+    geom_point(data=data6, colour = "#00BFC4")+
+    geom_point(data=data6pred, colour = "#00BFC4")+
     labs(title = "Number of new donators per yer", y = 'Number of newcomers')
 print(gr5)
     
@@ -215,7 +219,8 @@ dim(data9)
 
 gr6 = ggplot(data= data9, aes(x = Year, y = Count))+
     geom_line(alpha = 0.7, colour = "#00BFC4", size = 1) +
-    labs(title = "Number of lost PA donators per yer", y = 'Number of leavers')
+    labs(title = "Number of lost PA donators per yer", y = 'Number of leavers')+
+    geom_point(colour = "#00BFC4")
     
 print(gr6)
 
