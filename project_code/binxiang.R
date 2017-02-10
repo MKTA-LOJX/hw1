@@ -37,14 +37,15 @@ print(plot2)
 
 
 #-    Evolution of total number of donations for DO and PA through the different years
-# we will first estimate the number of donations (DO and PA) for December 2013 by taking
+# we will first estimate the number of donations (DO and PA) for November and December 2013 by taking
 # the values of the previous year, there are of course more complex methods
 
 query3 = "SELECT * FROM (
           SELECT YEAR(ActDate) as Year, MONTH(ActDate) as Month, ActType, COUNT(Amount) as Nb
           FROM charity.acts 
           GROUP BY Year, Month,ActType) A
-          WHERE A.Year = 2012 AND A.Month = 12"
+          WHERE A.Year = 2012 
+          AND (A.Month = 12 OR A.Month = 11) "
 data3 = sqlQuery(db,query3)
 
 
@@ -57,17 +58,18 @@ query4 = "
           GROUP BY Year, ActType
          "
 data4 = sqlQuery(db,query4)
-# add data for 2013 with the estimate of the number for december 2013
+
+# add data for 2013 with the estimate of the number for november and december 2013
 data4[data4$Year==2013&data4$ActType=='DO','Nb'] = data4[data4$Year==2013&data4$ActType=='DO','Nb'] + 
-                                                        data3[data3$ActType=='DO','Nb']
+                                                        sum(data3[data3$ActType=='DO','Nb'])
 data4[data4$Year==2013&data4$ActType=='PA','Nb'] = data4[data4$Year==2013&data4$ActType=='PA','Nb'] + 
-                                                        data3[data3$ActType=='PA','Nb']
+                                                        sum(data3[data3$ActType=='PA','Nb'])
 
 
 plot4 = ggplot(data = data4, aes(x=Year, y=Nb,col=ActType)) + geom_point() + geom_line() + 
   labs(title = 'Evolution of the total number of donations',y = 'Number of donations') +
-  xlim(c(2002,2013)) + ylim(c(0,max(data4$Nb)+10))
-print(plot4)
+  xlim(c(2002,2013)) + ylim(c(0,max(data4$Nb)+10)) 
+print(plot4) 
 
 
 

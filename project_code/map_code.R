@@ -2,7 +2,7 @@ library(RODBC)
 library(maps)
 library(ggplot2)
 library(maptools)
-library(RColorBrewer)
+
 
 
 db = odbcConnect("MySQL", uid="root")
