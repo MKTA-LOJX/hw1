@@ -3,7 +3,7 @@ library(maps)
 library(ggplot2)
 library(maptools)
 
-
+# To plot the map, you need to use the france department shapes files included in the zip
 
 db = odbcConnect("MySQL", uid="root")
 

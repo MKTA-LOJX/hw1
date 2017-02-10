@@ -1,6 +1,4 @@
-#---------------------------------
-#    Basic Questions HW1
-#---------------------------------
+
 # Libraries loading 
 library(RODBC)
 library(ggplot2)
@@ -146,3 +144,41 @@ plot8 = ggplot(data = data8,aes(x=Day,y=Avg_Nb,color=ActType)) + geom_line() + g
 print(plot8)
 
 
+
+
+
+### Clustering ###
+#- simple clustering of the donors with two variables, average amount per donation 
+# and total number of donations
+
+query9 = "SELECT ContactId, AVG(Amount) as Avg_amount, COUNT(Amount) as Nb
+          FROM charity.acts
+          GROUP BY ContactId"
+          
+
+data9 = sqlQuery(db,query9)
+
+data9 = cbind(data9,scale(data9[,c(2,3)],center = TRUE,scale =TRUE))
+colnames(data9) = c('Id','Avg_amount','Nb','sc_avg_amount','sc_nb')
+
+# look at total within distances 
+totwithin = c()
+
+for (k in c(1:15)){
+
+a = kmeans(data9[,c(4,5)],centers = k,nstart = 10)
+totwithin = c(totwithin,a$tot.withinss)
+}
+
+plot(totwithin)
+#elbow method says that a good number of clusters is 6
+
+cluster = kmeans(data9[,c(4,5)],centers = 6,nstart = 10)$cluster
+res = cbind(data9,cluster)
+# log scale for Average amount because of big donors
+res$Avg_amount = log(res$Avg_amount)
+res$cluster = as.factor(res$cluster)
+
+plot9 = ggplot(data=res,aes(x=Nb,y=Avg_amount,col=cluster)) + geom_point() +
+      labs(title='Clusters of donors, one point is a donor ', y='Average amount per donation (log scale)',x='total number of donations')
+print(plot9)
