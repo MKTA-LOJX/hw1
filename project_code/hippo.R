@@ -26,11 +26,13 @@ data1 = data1temp[order(data1temp$Year),]
 data1$Total_amount = as.numeric(data1$Total_amount)
 
 # 2013 basic prediction with december 2012 data
-query1bis = "SELECT Year, ActType, Total_amount FROM (
+query1bis = "SELECT Year, ActType, SUM(Total_amount) FROM (
              SELECT YEAR(ActDate) as Year, MONTH(ActDate) as Month, ActType, SUM(Amount) as Total_amount
              FROM charity.acts 
-             GROUP BY Year, Month,ActType) A
-             WHERE A.Year = 2012 AND A.Month = 12"
+             GROUP BY Year, Month, ActType) A
+             WHERE A.Year = 2012 
+             AND A.Month in (11,12)
+             GROUP BY Year, ActType"
 data1bis= sqlQuery(db,query1bis)
 
 datapred = data1
@@ -168,7 +170,7 @@ FROM (SELECT ContactId as contact, ActDate, ActType, MIN(ActDate) as FirstDO
 FROM charity.acts
 WHERE ActType LIKE "DO"
 GROUP BY 1) AS d
-WHERE MONTH(d.ActDate) = 12 AND YEAR(d.ActDate) = 2012
+WHERE MONTH(d.ActDate) in (11,12) AND YEAR(d.ActDate) = 2012
 GROUP BY Year'
 data7 = sqlQuery(db,query7)
 data5pred = data5
@@ -179,9 +181,8 @@ FROM (SELECT ContactId as contact, ActDate, ActType, MIN(ActDate) as FirstPA
 FROM charity.acts
 WHERE ActType LIKE "PA"
 GROUP BY 1) AS p
-WHERE MONTH(p.ActDate) = 12 AND YEAR(p.ActDate) = 2012
+WHERE MONTH(p.ActDate) in (11, 12) AND YEAR(p.ActDate) = 2012
 GROUP BY Year'
-data8 = sqlQuery(db,query8)
 data8 = sqlQuery(db,query8)
 data6pred = data6
 data6pred[c(nrow(data6pred)),2] =  data6[c(nrow(data6)),2] + data8[1,2]
