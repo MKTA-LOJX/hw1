@@ -3,7 +3,7 @@ library(maps)
 library(ggplot2)
 library(maptools)
 
-# To plot the map, you need to use the france department shapes files included in the zip
+# To plot the map, you need to use the france department shapes files in the map_france directory
 
 db = odbcConnect("MySQL", uid="root")
 
@@ -12,7 +12,7 @@ querytemp ="SELECT A.ContactId, A.ActType, A.PaymentType, YEAR(A.ActDate) as Yea
           JOIN charity.contacts B
           ON A.ContactId = B.ContactId"
 
-query1 = paste("SELECT A.Dep,A.ActType,AVG(Amount) as Avg_amount
+query1 = paste("SELECT A.Dep,A.ActType,AVG(Amount) as Avg_amount,COUNT(Amount) as Nb
           FROM
 
           (",querytemp,") A
